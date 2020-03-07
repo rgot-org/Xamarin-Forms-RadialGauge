@@ -1,0 +1,12 @@
+/Users/itamardori/Projects/Xamarin-Forms-RadialProgress/Library/RadialProgressGauge/RadialProgressGauge/obj/Debug/netstandard2.0/RadialProgressGauge.csprojAssemblyReference.cache
+/Users/itamardori/Projects/Xamarin-Forms-RadialProgress/Library/RadialProgressGauge/RadialProgressGauge/obj/Debug/netstandard2.0/Gauge.xaml.g.cs
+/Users/itamardori/Projects/Xamarin-Forms-RadialProgress/Library/RadialProgressGauge/RadialProgressGauge/obj/Debug/netstandard2.0/RadialProgressGauge.AssemblyInfoInputs.cache
+/Users/itamardori/Projects/Xamarin-Forms-RadialProgress/Library/RadialProgressGauge/RadialProgressGauge/obj/Debug/netstandard2.0/RadialProgressGauge.AssemblyInfo.cs
+/Users/itamardori/Projects/Xamarin-Forms-RadialProgress/Library/RadialProgressGauge/RadialProgressGauge/obj/Debug/netstandard2.0/RadialProgressGauge.dll
+/Users/itamardori/Projects/Xamarin-Forms-RadialProgress/Library/RadialProgressGauge/RadialProgressGauge/obj/Debug/netstandard2.0/ref/RadialProgressGauge.dll
+/Users/itamardori/Projects/Xamarin-Forms-RadialProgress/Library/RadialProgressGauge/RadialProgressGauge/obj/Debug/netstandard2.0/RadialProgressGauge.pdb
+/Users/itamardori/Projects/Xamarin-Forms-RadialProgress/Library/RadialProgressGauge/RadialProgressGauge/bin/Debug/netstandard2.0/RadialProgressGauge.deps.json
+/Users/itamardori/Projects/Xamarin-Forms-RadialProgress/Library/RadialProgressGauge/RadialProgressGauge/bin/Debug/netstandard2.0/RadialProgressGauge.dll
+/Users/itamardori/Projects/Xamarin-Forms-RadialProgress/Library/RadialProgressGauge/RadialProgressGauge/bin/Debug/netstandard2.0/ref/RadialProgressGauge.dll
+/Users/itamardori/Projects/Xamarin-Forms-RadialProgress/Library/RadialProgressGauge/RadialProgressGauge/bin/Debug/netstandard2.0/RadialProgressGauge.pdb
+/Users/itamardori/Projects/Xamarin-Forms-RadialProgress/Library/RadialProgressGauge/RadialProgressGauge/obj/Debug/netstandard2.0/XamlC.stamp

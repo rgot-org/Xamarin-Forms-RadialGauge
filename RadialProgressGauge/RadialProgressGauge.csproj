@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+    <PackOnBuild>true</PackOnBuild>
+    <PackageId>ItamarD.Xamarin.Forms.RadialProgress</PackageId>
+    <PackageVersion>1.0.0</PackageVersion>
+    <Authors>Itamar Dori</Authors>
+    <PackageProjectUrl>https://github.com/doriitamar/Xamarin-Forms-RadialProgress</PackageProjectUrl>
+    <Title>Radial Progress Component for Xamarin.Forms based on @KPS250example</Title>
+    <Summary>Radial Progress Component for Xamarin.Forms based on @KPS250example</Summary>
+    <PackageLicenseUrl>https://www.freebsd.org/copyright/freebsd-license.html</PackageLicenseUrl>
+    <PackageTags>Xamarin.Forms,Gauge,Radial</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Xamarin.Forms" Version="4.5.0.356" />
+    <PackageReference Include="SkiaSharp.Views.Forms" Version="1.68.1.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="MainPage.xaml" />
+  </ItemGroup>
+</Project>

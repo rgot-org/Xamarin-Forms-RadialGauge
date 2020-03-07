@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RadialProgress.Gauge"
+             xmlns:skia="clr-namespace:SkiaSharp.Views.Forms;assembly=SkiaSharp.Views.Forms">
+    <ContentView.Content>
+        <StackLayout>
+             <skia:SKCanvasView x:Name="canvas" HeightRequest="300"/>
+             <Slider x:Name="sweepAngleSlider" Minimum="0" Maximum="260" IsVisible="false"/>
+         </StackLayout>
+    </ContentView.Content>
+</ContentView>
