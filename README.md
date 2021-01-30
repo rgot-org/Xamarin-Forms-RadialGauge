@@ -1,6 +1,6 @@
-# ItamarD.Xamarin.Forms.RadialProgress
+# Xamarin-Forms-RadialGauge
 
-Radial Progress Indicator in Xamarin Forms based on @KPS250's component, NuGet package.
+Radial Gauge Indicator in Xamarin Forms based on [ItamarD.Xamarin.Forms.RadialProgress](https://github.com/doriitamar/Xamarin.Forms.RadialGauge)'s component, NuGet package.
 
 ![Banner](https://github.com/KPS25/RadialProgress/blob/master/Screenshot_Banner.jpg)
 
@@ -12,7 +12,7 @@ Radial Progress Indicator in Xamarin Forms based on @KPS250's component, NuGet p
 Just add the NuGet package and you're good to go!
 
 ```bash
-dotnet add package ItamarD.Xamarin.Forms.RadialProgress
+dotnet add package org.rgot.RadialGauge
 ```
 
 ## Usage
@@ -23,24 +23,19 @@ This is a Xamarin.Forms component, and is compatible with both iOS and Android.
 Add the namespace
 
 ```csharp
- xmlns:radial="clr-namespace:RadialProgress;assembly=RadialProgressGauge"
+ xmlns:radial="clr-namespace:RadialGauge;assembly=RadialGauge"
 ```
 
 then you can use the `radial:gauge` component!
 
 ### Bindable Properties
 
-* `CurrentValue`
+* `CurrentValue` : Value of the gauge
 
-Value of the gauge
+* `MaxValue` : Maximum value of the gauge
+* `MinValue` : Minimum value of the gauge
 
-* `MaxValue`
-
-Maximum value of the gauge
-
-* `HasAnimation`
-
-When `true`, displays an animation on `CurrentValue` change
+* `HasAnimation` : When `true`, displays an animation on `CurrentValue` change
 
 * `BackgroundColor`
 
