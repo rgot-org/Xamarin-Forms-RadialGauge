@@ -7,7 +7,7 @@ using SkiaSharp.Views.Forms;
 using System.Diagnostics;
 using Xamarin.Forms.Xaml;
 
-namespace RadialProgress
+namespace RadialGauge
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class Gauge : ContentView
@@ -125,18 +125,16 @@ namespace RadialProgress
             sweepAngleSlider.ValueChanged += (sender, e) => canvas.InvalidateSurface();
         }
 
-        static bool ValidateMaxVal(BindableObject b, object value) => ((int)value) > 0;
-        private static bool ValidateMinVal(BindableObject bindable, object value)
-        {
-            throw new NotImplementedException();
-        }
+        static bool ValidateMaxVal(BindableObject b, object value) => true;// ((int)value) > 0;
+        private static bool ValidateMinVal(BindableObject bindable, object value) => true;
+        
         static bool ValidateCurrVal(BindableObject b, object value) => ((int)value) <= ((Gauge)b).MaxValue && ((int)value) >= ((Gauge)b).MinValue;
 
         static void OnCurrentValueChanged(BindableObject b, object oldValue, object newValue)
         {
 
             Gauge g = (Gauge)b;
-            int endState = g.progressUtils.getSweepAngle(g.MaxValue-g.MinValue, (int)newValue);
+            int endState = g.progressUtils.getSweepAngle(g.MaxValue-g.MinValue, (int)newValue - g.MinValue);
             _ = g.AnimateProgress(endState);
         }
 
@@ -145,14 +143,14 @@ namespace RadialProgress
 
             Gauge g = (Gauge)b;
             if (g.CurrentValue > (int)newValue) g.CurrentValue = (int)newValue;
-            int endState = g.progressUtils.getSweepAngle((int)newValue-g.MinValue, g.CurrentValue);
+            int endState = g.progressUtils.getSweepAngle((int)newValue-g.MinValue, g.CurrentValue - g.MinValue);
             _ = g.AnimateProgress(endState);
         }
         private static void OnMinValueChanged(BindableObject bindable, object oldValue, object newValue)
         {
             Gauge g = (Gauge)bindable;
             if (g.CurrentValue < (int)newValue) g.CurrentValue = (int)newValue;
-            int endState = g.progressUtils.getSweepAngle(g.MaxValue-(int)newValue , g.CurrentValue);
+            int endState = g.progressUtils.getSweepAngle(g.MaxValue-(int)newValue , g.CurrentValue - (int)newValue);
             _ = g.AnimateProgress(endState);
         }
         // Animating the Progress of Radial Gauge
@@ -184,11 +182,15 @@ namespace RadialProgress
             int lineSize1 = 220;
             int lineSize2 = 70;
             int lineSize3 = 80;
+            int lineSize4 = 50;
 
             // Line Y Coordinate inside Radial Gauge
             int lineHeight1 = 100;
             int lineHeight2 = 200;
             int lineHeight3 = 300;
+            int lineHeight4 = 400;
+            int lineHeight5 = 500;
+
 
             // Start & End Angle for Radial Gauge
             float startAngle = -220;
@@ -223,7 +225,14 @@ namespace RadialProgress
                 Debug.WriteLine(" C : " + Xc + "  " + Yc);
                 Debug.WriteLine("XY : " + X1 + "  " + Y1);
                 Debug.WriteLine("XY : " + X2 + "  " + Y2);
-
+                // petit tacé noir
+                SKPaint trait = new SKPaint
+                {
+                    Style = SKPaintStyle.Stroke,
+                    Color = Color.FromHex("#000000").ToSKColor(),
+                    StrokeWidth = 1,
+                    StrokeCap = SKStrokeCap.Round
+                };
                 //  Empty Gauge Styling
                 SKPaint paint1 = new SKPaint
                 {
@@ -247,12 +256,15 @@ namespace RadialProgress
 
                 // Defining boundaries for Gauge
                 SKRect rect = new SKRect(X1, Y1, X2, Y2);
+                //SKPath rectangle = new SKPath();
+                //rectangle.AddRect(rect);
+                //canvas.DrawPath(rectangle, trait);
 
                 // Rendering Empty Gauge
                 SKPath path1 = new SKPath();
                 path1.AddArc(rect, startAngle, sweepAngle);
                 canvas.DrawPath(path1, paint1);
-
+               
                 // Rendering Filled Gauge
                 SKPath path2 = new SKPath();
                 path2.AddArc(rect, startAngle, (float)sweepAngleSlider.Value);
@@ -295,7 +307,25 @@ namespace RadialProgress
                     skPaint.TextSize = progressUtils.getFactoredHeight(lineSize3);
                     canvas.DrawText(BottomText, Xc, Yc + progressUtils.getFactoredHeight(lineHeight3), skPaint);
                 }
-
+                 // min et max
+                using (SKPaint skPaint = new SKPaint())
+                {
+                    skPaint.Style = SKPaintStyle.Fill;
+                    skPaint.IsAntialias = true;
+                    skPaint.Color = TextColor.ToSKColor();
+                    skPaint.TextAlign = SKTextAlign.Left;
+                    skPaint.TextSize = progressUtils.getFactoredHeight(lineSize3);
+                    canvas.DrawText(MinValue.ToString(), X1 + progressUtils.getFactoredWidth(radialGaugeWidth*2), Yc + progressUtils.getFactoredHeight(lineHeight5), skPaint);
+                }
+                using (SKPaint skPaint = new SKPaint())
+                {
+                    skPaint.Style = SKPaintStyle.Fill;
+                    skPaint.IsAntialias = true;
+                    skPaint.Color = TextColor.ToSKColor();
+                    skPaint.TextAlign = SKTextAlign.Right;
+                    skPaint.TextSize = progressUtils.getFactoredHeight(lineSize3);
+                    canvas.DrawText(MaxValue.ToString(), X2 - progressUtils.getFactoredWidth(radialGaugeWidth*2), Yc + progressUtils.getFactoredHeight(lineHeight5), skPaint);
+                }
             }
             catch (Exception e)
             {

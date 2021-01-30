@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
-namespace RadialProgress
+namespace RadialGauge
 {
     internal class ProgressUtils
     {

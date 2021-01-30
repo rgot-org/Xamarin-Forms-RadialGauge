@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Drawing;
-namespace RadialProgress
+namespace RadialGauge
 {
     internal class ColorInterpolator
     {
