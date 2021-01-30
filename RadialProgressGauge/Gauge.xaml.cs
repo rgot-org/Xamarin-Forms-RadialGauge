@@ -18,6 +18,12 @@ namespace RadialProgress
             BindableProperty.Create("CurrentValue", typeof(int), typeof(Gauge), propertyChanged: OnCurrentValueChanged, validateValue: ValidateCurrVal);
         public static readonly BindableProperty MaxValueProperty =
             BindableProperty.Create("MaxValue", typeof(int), typeof(Gauge), 100, propertyChanged: OnMaxValueChanged, validateValue: ValidateMaxVal);
+
+        public static readonly BindableProperty MinValueProperty =
+           BindableProperty.Create("MinValue", typeof(int), typeof(Gauge), 0, propertyChanged: OnMinValueChanged, validateValue: ValidateMinVal);
+
+
+
         public static readonly BindableProperty HasAnimationProperty =
             BindableProperty.Create("HasAnimation", typeof(bool), typeof(Gauge), false);
         public static readonly BindableProperty FromColorProperty =
@@ -55,7 +61,11 @@ namespace RadialProgress
             get => (int)GetValue(MaxValueProperty);
             set => SetValue(MaxValueProperty, value);
         }
-
+        public int MinValue 
+        {
+            get => (int)GetValue(MinValueProperty);
+            set => SetValue(MinValueProperty, value);
+        }
         public System.Drawing.Color FromColor
         {
             get => (System.Drawing.Color)GetValue(FromColorProperty);
@@ -116,13 +126,17 @@ namespace RadialProgress
         }
 
         static bool ValidateMaxVal(BindableObject b, object value) => ((int)value) > 0;
-        static bool ValidateCurrVal(BindableObject b, object value) => ((int)value) <= ((Gauge)b).MaxValue && ((int)value) >= 0;
+        private static bool ValidateMinVal(BindableObject bindable, object value)
+        {
+            throw new NotImplementedException();
+        }
+        static bool ValidateCurrVal(BindableObject b, object value) => ((int)value) <= ((Gauge)b).MaxValue && ((int)value) >= ((Gauge)b).MinValue;
 
         static void OnCurrentValueChanged(BindableObject b, object oldValue, object newValue)
         {
 
             Gauge g = (Gauge)b;
-            int endState = g.progressUtils.getSweepAngle(g.MaxValue, (int)newValue);
+            int endState = g.progressUtils.getSweepAngle(g.MaxValue-g.MinValue, (int)newValue);
             _ = g.AnimateProgress(endState);
         }
 
@@ -131,10 +145,16 @@ namespace RadialProgress
 
             Gauge g = (Gauge)b;
             if (g.CurrentValue > (int)newValue) g.CurrentValue = (int)newValue;
-            int endState = g.progressUtils.getSweepAngle((int)newValue, g.CurrentValue);
+            int endState = g.progressUtils.getSweepAngle((int)newValue-g.MinValue, g.CurrentValue);
             _ = g.AnimateProgress(endState);
         }
-
+        private static void OnMinValueChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+            Gauge g = (Gauge)bindable;
+            if (g.CurrentValue < (int)newValue) g.CurrentValue = (int)newValue;
+            int endState = g.progressUtils.getSweepAngle(g.MaxValue-(int)newValue , g.CurrentValue);
+            _ = g.AnimateProgress(endState);
+        }
         // Animating the Progress of Radial Gauge
         private async Task AnimateProgress(int progress)
         {

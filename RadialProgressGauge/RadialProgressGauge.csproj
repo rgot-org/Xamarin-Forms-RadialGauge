@@ -12,6 +12,8 @@
     <Summary>Radial Progress Component for Xamarin.Forms based on @KPS250example</Summary>
     <PackageLicenseUrl>https://www.freebsd.org/copyright/freebsd-license.html</PackageLicenseUrl>
     <PackageTags>Xamarin.Forms,Gauge,Radial</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

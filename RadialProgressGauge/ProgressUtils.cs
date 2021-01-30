@@ -46,7 +46,7 @@ namespace RadialProgress
             return (float)((value / refWidth) * deviceWidth);
         }
 
-        // Deriving Sweep Angle
+        // Deriving Sweep Angle getSweepAngle(g.MaxValue, (int)newValue);
         public int getSweepAngle(int goal, int achieved)
         {
             int SweepAngle = 260;
