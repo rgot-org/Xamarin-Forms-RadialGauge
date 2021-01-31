@@ -47,10 +47,10 @@ namespace RadialGauge
         }
 
         // Deriving Sweep Angle getSweepAngle(g.MaxValue, (int)newValue);
-        public int getSweepAngle(int goal, int achieved)
+        public int getSweepAngle(int max, int min, int achieved)
         {
             int SweepAngle = 260;
-            float factor = (float)achieved / goal;
+            float factor = (float)(achieved-min) / (max-min);
             Debug.WriteLine("SWEEP ANGLE : " + (int)(SweepAngle * factor));
 
             return (int)(SweepAngle * factor);

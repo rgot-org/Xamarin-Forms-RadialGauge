@@ -18,12 +18,8 @@ namespace RadialGauge
             BindableProperty.Create("CurrentValue", typeof(int), typeof(Gauge), propertyChanged: OnCurrentValueChanged, validateValue: ValidateCurrVal);
         public static readonly BindableProperty MaxValueProperty =
             BindableProperty.Create("MaxValue", typeof(int), typeof(Gauge), 100, propertyChanged: OnMaxValueChanged, validateValue: ValidateMaxVal);
-
         public static readonly BindableProperty MinValueProperty =
            BindableProperty.Create("MinValue", typeof(int), typeof(Gauge), 0, propertyChanged: OnMinValueChanged, validateValue: ValidateMinVal);
-
-
-
         public static readonly BindableProperty HasAnimationProperty =
             BindableProperty.Create("HasAnimation", typeof(bool), typeof(Gauge), false);
         public static readonly BindableProperty FromColorProperty =
@@ -134,7 +130,7 @@ namespace RadialGauge
         {
 
             Gauge g = (Gauge)b;
-            int endState = g.progressUtils.getSweepAngle(g.MaxValue-g.MinValue, (int)newValue - g.MinValue);
+            int endState = g.progressUtils.getSweepAngle(g.MaxValue,g.MinValue, (int)newValue);
             _ = g.AnimateProgress(endState);
         }
 
@@ -143,14 +139,14 @@ namespace RadialGauge
 
             Gauge g = (Gauge)b;
             if (g.CurrentValue > (int)newValue) g.CurrentValue = (int)newValue;
-            int endState = g.progressUtils.getSweepAngle((int)newValue-g.MinValue, g.CurrentValue - g.MinValue);
+            int endState = g.progressUtils.getSweepAngle((int)newValue,g.MinValue, g.CurrentValue );
             _ = g.AnimateProgress(endState);
         }
         private static void OnMinValueChanged(BindableObject bindable, object oldValue, object newValue)
         {
             Gauge g = (Gauge)bindable;
             if (g.CurrentValue < (int)newValue) g.CurrentValue = (int)newValue;
-            int endState = g.progressUtils.getSweepAngle(g.MaxValue-(int)newValue , g.CurrentValue - (int)newValue);
+            int endState = g.progressUtils.getSweepAngle(g.MaxValue,(int)newValue , g.CurrentValue );
             _ = g.AnimateProgress(endState);
         }
         // Animating the Progress of Radial Gauge
@@ -173,23 +169,25 @@ namespace RadialGauge
 
         public void DrawGaugeAsync(SKPaintSurfaceEventArgs args)
         {
+            
             // Radial Gauge Constants
-            int uPadding = 150;
-            int side = 500;
-            int radialGaugeWidth = 25;
+            
+            int side = (int) Math.Min(Width,Height);
+            int uPadding = side * 150/500;
+            int radialGaugeWidth = side/20;
 
             // Line TextSize inside Radial Gauge
-            int lineSize1 = 220;
-            int lineSize2 = 70;
-            int lineSize3 = 80;
+            int lineSize1 = side* 22/50;
+            int lineSize2 = side *7/50;
+            int lineSize3 = side*8/50;
             int lineSize4 = 50;
 
             // Line Y Coordinate inside Radial Gauge
-            int lineHeight1 = 100;
-            int lineHeight2 = 200;
-            int lineHeight3 = 300;
-            int lineHeight4 = 400;
-            int lineHeight5 = 500;
+            int lineHeight1 = side/5;
+            int lineHeight2 = side*2/5;
+            int lineHeight3 = side*3/5;
+            int lineHeight4 = side*4/5;
+            int lineHeight5 = side;
 
 
             // Start & End Angle for Radial Gauge
@@ -242,7 +240,7 @@ namespace RadialGauge
                     StrokeCap = SKStrokeCap.Round
                 };
 
-                double pct = (double)CurrentValue / MaxValue;
+                double pct = (double)(CurrentValue-MinValue) / (MaxValue-MinValue);
                 System.Drawing.Color interpolated = ColorInterpolator.InterpolateBetween(FromColor, ToColor, ViaColor, pct);
 
                 // Filled Gauge Styling
@@ -315,7 +313,7 @@ namespace RadialGauge
                     skPaint.Color = TextColor.ToSKColor();
                     skPaint.TextAlign = SKTextAlign.Left;
                     skPaint.TextSize = progressUtils.getFactoredHeight(lineSize3);
-                    canvas.DrawText(MinValue.ToString(), X1 + progressUtils.getFactoredWidth(radialGaugeWidth*2), Yc + progressUtils.getFactoredHeight(lineHeight5), skPaint);
+                    canvas.DrawText(MinValue.ToString(), X1 + progressUtils.getFactoredWidth(radialGaugeWidth*3), Yc + progressUtils.getFactoredHeight(lineHeight5), skPaint);
                 }
                 using (SKPaint skPaint = new SKPaint())
                 {
@@ -324,7 +322,7 @@ namespace RadialGauge
                     skPaint.Color = TextColor.ToSKColor();
                     skPaint.TextAlign = SKTextAlign.Right;
                     skPaint.TextSize = progressUtils.getFactoredHeight(lineSize3);
-                    canvas.DrawText(MaxValue.ToString(), X2 - progressUtils.getFactoredWidth(radialGaugeWidth*2), Yc + progressUtils.getFactoredHeight(lineHeight5), skPaint);
+                    canvas.DrawText(MaxValue.ToString(), X2 - progressUtils.getFactoredWidth(radialGaugeWidth*3), Yc + progressUtils.getFactoredHeight(lineHeight5), skPaint);
                 }
             }
             catch (Exception e)
