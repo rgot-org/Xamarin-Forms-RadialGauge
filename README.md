@@ -54,6 +54,9 @@ namespace test_radialGauge
         public MainPage()
         {
             InitializeComponent();
+            jauge.FromColor = Color.Cyan;
+            jauge.ToColor = Color.Orange;
+            jauge.ViaColor = Color.GreenYellow;
         }
         private void slider_ValueChanged(object sender, ValueChangedEventArgs e)
         {
