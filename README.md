@@ -39,9 +39,6 @@ dotnet add package org.rgot.RadialGauge
                       UnitOfMeasurement="°C" 
                       BottomText="Sensor"
                       HasAnimation="False"
-                      FromColor="#0000ff"
-                      ToColor="Red"
-                      ViaColor="Gold"
                       />
         <Slider Minimum="-20" Maximum="50" x:Name="slider" ValueChanged="slider_ValueChanged"/>
     </StackLayout>
