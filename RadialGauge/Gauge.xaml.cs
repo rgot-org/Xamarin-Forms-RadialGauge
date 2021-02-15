@@ -6,16 +6,15 @@ using SkiaSharp;
 using SkiaSharp.Views.Forms;
 using System.Diagnostics;
 using Xamarin.Forms.Xaml;
+using Xamarin.Essentials;
 
 namespace RadialGauge
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class Gauge : ContentView
     {
-        readonly ProgressUtils progressUtils = new ProgressUtils();
-
         public static readonly BindableProperty CurrentValueProperty =
-            BindableProperty.Create("CurrentValue", typeof(int), typeof(Gauge), propertyChanged: OnCurrentValueChanged, validateValue: ValidateCurrVal);
+      BindableProperty.Create("CurrentValue", typeof(int), typeof(Gauge), propertyChanged: OnCurrentValueChanged, validateValue: ValidateCurrVal);
         public static readonly BindableProperty MaxValueProperty =
             BindableProperty.Create("MaxValue", typeof(int), typeof(Gauge), 100, propertyChanged: OnMaxValueChanged, validateValue: ValidateMaxVal);
         public static readonly BindableProperty MinValueProperty =
@@ -37,7 +36,7 @@ namespace RadialGauge
         public static readonly BindableProperty BottomTextProperty =
             BindableProperty.Create("BottomText", typeof(string), typeof(Gauge), "");
         public static readonly BindableProperty TextFontProperty =
-            BindableProperty.Create("TextFont", typeof(string), typeof(Gauge), "Arial");
+            BindableProperty.Create("TextFont", typeof(string), typeof(Gauge), "Helvetica");
 
         //UnitOfMeasurement
         public int CurrentValue
@@ -57,7 +56,7 @@ namespace RadialGauge
             get => (int)GetValue(MaxValueProperty);
             set => SetValue(MaxValueProperty, value);
         }
-        public int MinValue 
+        public int MinValue
         {
             get => (int)GetValue(MinValueProperty);
             set => SetValue(MinValueProperty, value);
@@ -109,7 +108,7 @@ namespace RadialGauge
             get => (string)GetValue(TextFontProperty);
             set => SetValue(TextFontProperty, value);
         }
-        
+
 
         public Gauge()
         {
@@ -123,14 +122,14 @@ namespace RadialGauge
 
         static bool ValidateMaxVal(BindableObject b, object value) => true;// ((int)value) > 0;
         private static bool ValidateMinVal(BindableObject bindable, object value) => true;
-        
+
         static bool ValidateCurrVal(BindableObject b, object value) => ((int)value) <= ((Gauge)b).MaxValue && ((int)value) >= ((Gauge)b).MinValue;
 
         static void OnCurrentValueChanged(BindableObject b, object oldValue, object newValue)
         {
 
             Gauge g = (Gauge)b;
-            int endState = g.progressUtils.getSweepAngle(g.MaxValue,g.MinValue, (int)newValue);
+            int endState = g.getSweepAngle(g.MaxValue, g.MinValue, (int)newValue);
             _ = g.AnimateProgress(endState);
         }
 
@@ -139,196 +138,215 @@ namespace RadialGauge
 
             Gauge g = (Gauge)b;
             if (g.CurrentValue > (int)newValue) g.CurrentValue = (int)newValue;
-            int endState = g.progressUtils.getSweepAngle((int)newValue,g.MinValue, g.CurrentValue );
+            int endState = g.getSweepAngle((int)newValue, g.MinValue, g.CurrentValue);
             _ = g.AnimateProgress(endState);
         }
         private static void OnMinValueChanged(BindableObject bindable, object oldValue, object newValue)
         {
             Gauge g = (Gauge)bindable;
             if (g.CurrentValue < (int)newValue) g.CurrentValue = (int)newValue;
-            int endState = g.progressUtils.getSweepAngle(g.MaxValue,(int)newValue , g.CurrentValue );
+            int endState = g.getSweepAngle(g.MaxValue, (int)newValue, g.CurrentValue);
             _ = g.AnimateProgress(endState);
         }
         // Animating the Progress of Radial Gauge
         private async Task AnimateProgress(int progress)
         {
-            if(HasAnimation)
+            if (HasAnimation)
             {
-                sweepAngleSlider.Value = 1;
+                var depart = sweepAngleSlider.Value;
+                var sens = 5;
 
-                // Looping at data interval of 5
-                for (int i = 0; i < progress; i = i + 5)
+                if (depart > progress)
                 {
-                    sweepAngleSlider.Value = i;
+                    sens = -5;
+                }
+                while (Math.Abs( progress-depart ) > 5)
+                {
+                    depart += sens;
+                    sweepAngleSlider.Value = depart;
                     await Task.Delay(3);
                 }
             }
-
-            sweepAngleSlider.Value = progress;
+        sweepAngleSlider.Value = progress;
         }
+    public int getSweepAngle(int max, int min, int achieved)
+    {
+        int SweepAngle = 260;
+        float factor = (float)(achieved - min) / (max - min);
+        Debug.WriteLine("SWEEP ANGLE : " + (int)(SweepAngle * factor));
 
-        public void DrawGaugeAsync(SKPaintSurfaceEventArgs args)
+        return (int)(SweepAngle * factor);
+
+    }
+    private float convertUnit2Px(float value)
+    {
+        return (float)(value * (float)DeviceDisplay.MainDisplayInfo.Density);
+    }
+    public void DrawGaugeAsync(SKPaintSurfaceEventArgs args)
+    {
+        /*
+        // Radial Gauge Constants
+        int uPadding = 150;
+        int side = 500;
+        int radialGaugeWidth = 25;
+
+        // Line TextSize inside Radial Gauge
+        int textSize1 = 220;
+        int textSize2 = 70;
+        int textSize3 = 80;
+
+        // Line Y Coordinate inside Radial Gauge
+        int lineHeight1 = 100;
+        int lineHeight2 = 200;
+        int lineHeight3 = 300;
+
+        // Start & End Angle for Radial Gauge
+        float startAngle = -220;
+        float sweepAngle = 260;
+         */
+
+        // Radial Gauge Constants         
+
+        // version originale ramenée à 300
+        int side = 300;
+        float scale = (float)(Math.Min(Width, Height) / side);// unité xamarin forms           
+
+        float radialGaugeWidth = 30 * scale;
+        float uPadding = 25 * scale;
+        // centre
+        float X_center = side * scale / 2;
+        float Y_center = X_center;
+        // Line TextSize inside Radial Gauge
+        float textSize1 = 80 * scale;
+        float textSize2 = 42 * scale;
+        float textSize3 = 30 * scale;
+
+        // Line Y Coordinate inside Radial Gauge
+        float lineHeight1 = 50 * scale;
+        float lineHeight2 = 80 * scale;
+
+        // Start & End Angle for Radial Gauge
+        float startAngle = -220;
+        float sweepAngle = 260;
+
+        try
         {
-            
-            // Radial Gauge Constants
-            
-            int side = (int) Math.Min(Width,Height);
-            int uPadding = side * 150/500;
-            int radialGaugeWidth = side/20;
+            SKImageInfo info = args.Info;
+            SKSurface surface = args.Surface;
+            SKCanvas canvas = surface.Canvas;
+            canvas.Clear();
 
-            // Line TextSize inside Radial Gauge
-            int lineSize1 = side* 22/50;
-            int lineSize2 = side *7/50;
-            int lineSize3 = side*8/50;
-            int lineSize4 = 50;
+            // Top Padding for Radial Gauge
 
-            // Line Y Coordinate inside Radial Gauge
-            int lineHeight1 = side/5;
-            int lineHeight2 = side*2/5;
-            int lineHeight3 = side*3/5;
-            int lineHeight4 = side*4/5;
-            int lineHeight5 = side;
+            float Padding_px = convertUnit2Px(uPadding);
+
+            // Gauge center coordonates
+            int Xc = (int)convertUnit2Px(X_center);
+            int Yc = (int)convertUnit2Px(Y_center);
+            // X1 Y1 are lefttop cordiates of rectange
+            int X1 = (int)(Padding_px);
+            int Y1 = (int)(Padding_px);
+
+            // X2 Y2 are rightbottom cordiates of rectange
+            int X2 = (int)(2 * Xc - Padding_px);
+            int Y2 = (int)(2 * Yc - Padding_px);
 
 
-            // Start & End Angle for Radial Gauge
-            float startAngle = -220;
-            float sweepAngle = 260;
-
-            try
+            //  Empty Gauge Styling
+            SKPaint paint1 = new SKPaint
             {
-                SKImageInfo info = args.Info;
-                SKSurface surface = args.Surface;
-                SKCanvas canvas = surface.Canvas;
-                progressUtils.SetDevice(info.Height, info.Width);
-                canvas.Clear();
+                Style = SKPaintStyle.Stroke,
+                Color = EmptyFillColor.ToSKColor(),
+                StrokeWidth = convertUnit2Px(radialGaugeWidth),
+                StrokeCap = SKStrokeCap.Round
+            };
 
-                // Top Padding for Radial Gauge
-                float upperPading = progressUtils.getFactoredHeight(uPadding);
+            double pct = (double)(CurrentValue - MinValue) / (MaxValue - MinValue);
+            System.Drawing.Color interpolated = ColorInterpolator.InterpolateBetween(FromColor, ToColor, ViaColor, pct);
 
-                // Xc & Yc are center of the Circle
-                int Xc = info.Width / 2;
-                float Yc = progressUtils.getFactoredHeight(side);
-
-                // X1 Y1 are lefttop cordiates of rectange
-                int X1 = (int)(Xc - Yc);
-                int Y1 = (int)(Yc - Yc + upperPading);
-
-                // X2 Y2 are rightbottom cordiates of rectange
-                int X2 = (int)(Xc + Yc);
-                int Y2 = (int)(Yc + Yc + upperPading);
-
-                //Loggig Screen Specific Calculated Values
-                Debug.WriteLine("INFO " + info.Width + " - " + info.Height);
-                Debug.WriteLine(" C : " + upperPading + "  " + info.Height);
-                Debug.WriteLine(" C : " + Xc + "  " + Yc);
-                Debug.WriteLine("XY : " + X1 + "  " + Y1);
-                Debug.WriteLine("XY : " + X2 + "  " + Y2);
-                // petit tacé noir
-                SKPaint trait = new SKPaint
-                {
-                    Style = SKPaintStyle.Stroke,
-                    Color = Color.FromHex("#000000").ToSKColor(),
-                    StrokeWidth = 1,
-                    StrokeCap = SKStrokeCap.Round
-                };
-                //  Empty Gauge Styling
-                SKPaint paint1 = new SKPaint
-                {
-                    Style = SKPaintStyle.Stroke,
-                    Color = EmptyFillColor.ToSKColor(),
-                    StrokeWidth = progressUtils.getFactoredWidth(radialGaugeWidth),
-                    StrokeCap = SKStrokeCap.Round
-                };
-
-                double pct = (double)(CurrentValue-MinValue) / (MaxValue-MinValue);
-                System.Drawing.Color interpolated = ColorInterpolator.InterpolateBetween(FromColor, ToColor, ViaColor, pct);
-
-                // Filled Gauge Styling
-                SKPaint paint2 = new SKPaint
-                {
-                    Style = SKPaintStyle.Stroke,
-                    Color = new SKColor(interpolated.R, interpolated.G, interpolated.B),
-                    StrokeWidth = progressUtils.getFactoredWidth(radialGaugeWidth),
-                    StrokeCap = SKStrokeCap.Round
-                };
-
-                // Defining boundaries for Gauge
-                SKRect rect = new SKRect(X1, Y1, X2, Y2);
-                //SKPath rectangle = new SKPath();
-                //rectangle.AddRect(rect);
-                //canvas.DrawPath(rectangle, trait);
-
-                // Rendering Empty Gauge
-                SKPath path1 = new SKPath();
-                path1.AddArc(rect, startAngle, sweepAngle);
-                canvas.DrawPath(path1, paint1);
-               
-                // Rendering Filled Gauge
-                SKPath path2 = new SKPath();
-                path2.AddArc(rect, startAngle, (float)sweepAngleSlider.Value);
-                canvas.DrawPath(path2, paint2);
-
-                // Achieved Minutes
-                using (SKPaint skPaint = new SKPaint())
-                {
-                    skPaint.Style = SKPaintStyle.Fill;
-                    skPaint.IsAntialias = true;
-                    skPaint.Color = TextColor.ToSKColor();
-                    skPaint.TextAlign = SKTextAlign.Center;
-                    skPaint.TextSize = progressUtils.getFactoredHeight(lineSize1);
-                    skPaint.Typeface = SKTypeface.FromFamilyName(
-                                        TextFont,
-                                        SKFontStyleWeight.Bold,
-                                        SKFontStyleWidth.Normal,
-                                        SKFontStyleSlant.Upright);
-                   canvas.DrawText(CurrentValue + "", Xc, Yc + progressUtils.getFactoredHeight(lineHeight1), skPaint);
-                }
-
-                // Achieved Minutes Text Styling
-                using (SKPaint skPaint = new SKPaint())
-                {
-                    skPaint.Style = SKPaintStyle.Fill;
-                    skPaint.IsAntialias = true;
-                    skPaint.Color = TextColor.ToSKColor();
-                    skPaint.TextAlign = SKTextAlign.Center;
-                    skPaint.TextSize = progressUtils.getFactoredHeight(lineSize2);
-                    canvas.DrawText(UnitOfMeasurement, Xc, Yc + progressUtils.getFactoredHeight(lineHeight2), skPaint);
-                }
-
-                // Goal Minutes Text Styling
-                using (SKPaint skPaint = new SKPaint())
-                {
-                    skPaint.Style = SKPaintStyle.Fill;
-                    skPaint.IsAntialias = true;
-                    skPaint.Color = TextColor.ToSKColor();
-                    skPaint.TextAlign = SKTextAlign.Center;
-                    skPaint.TextSize = progressUtils.getFactoredHeight(lineSize3);
-                    canvas.DrawText(BottomText, Xc, Yc + progressUtils.getFactoredHeight(lineHeight3), skPaint);
-                }
-                 // min et max
-                using (SKPaint skPaint = new SKPaint())
-                {
-                    skPaint.Style = SKPaintStyle.Fill;
-                    skPaint.IsAntialias = true;
-                    skPaint.Color = TextColor.ToSKColor();
-                    skPaint.TextAlign = SKTextAlign.Left;
-                    skPaint.TextSize = progressUtils.getFactoredHeight(lineSize3);
-                    canvas.DrawText(MinValue.ToString(), X1 + progressUtils.getFactoredWidth(radialGaugeWidth*3), Yc + progressUtils.getFactoredHeight(lineHeight5), skPaint);
-                }
-                using (SKPaint skPaint = new SKPaint())
-                {
-                    skPaint.Style = SKPaintStyle.Fill;
-                    skPaint.IsAntialias = true;
-                    skPaint.Color = TextColor.ToSKColor();
-                    skPaint.TextAlign = SKTextAlign.Right;
-                    skPaint.TextSize = progressUtils.getFactoredHeight(lineSize3);
-                    canvas.DrawText(MaxValue.ToString(), X2 - progressUtils.getFactoredWidth(radialGaugeWidth*3), Yc + progressUtils.getFactoredHeight(lineHeight5), skPaint);
-                }
-            }
-            catch (Exception e)
+            // Filled Gauge Styling
+            SKPaint paint2 = new SKPaint
             {
-                Debug.WriteLine(e.StackTrace);
+                Style = SKPaintStyle.Stroke,
+                Color = new SKColor(interpolated.R, interpolated.G, interpolated.B),
+                StrokeWidth = convertUnit2Px(radialGaugeWidth),
+                StrokeCap = SKStrokeCap.Round
+            };
+
+            // Defining boundaries for Gauge
+            SKRect rect = new SKRect(X1, Y1, X2, Y2);
+
+            // Rendering Empty Gauge
+            SKPath path1 = new SKPath();
+            path1.AddArc(rect, startAngle, sweepAngle);
+            canvas.DrawPath(path1, paint1);
+
+            // Rendering Filled Gauge
+            SKPath path2 = new SKPath();
+            path2.AddArc(rect, startAngle, (float)sweepAngleSlider.Value);
+            canvas.DrawPath(path2, paint2);
+
+            // Achieved Minutes
+            using (SKPaint skPaint = new SKPaint())
+            {
+                skPaint.Style = SKPaintStyle.Fill;
+                skPaint.IsAntialias = true;
+                skPaint.Color = TextColor.ToSKColor();
+                skPaint.TextAlign = SKTextAlign.Center;
+                skPaint.TextSize = convertUnit2Px(textSize1);
+                skPaint.Typeface = SKTypeface.FromFamilyName(
+                                    TextFont,
+                                    SKFontStyleWeight.Bold,
+                                    SKFontStyleWidth.Normal,
+                                    SKFontStyleSlant.Upright);
+                canvas.DrawText(CurrentValue + "", Xc, Yc, skPaint);
             }
+
+            //// Achieved Minutes Text Styling
+            using (SKPaint skPaint = new SKPaint())
+            {
+                skPaint.Style = SKPaintStyle.Fill;
+                skPaint.IsAntialias = true;
+                skPaint.Color = TextColor.ToSKColor();
+                skPaint.TextAlign = SKTextAlign.Center;
+                skPaint.TextSize = convertUnit2Px(textSize2);
+                canvas.DrawText(UnitOfMeasurement, Xc, Yc + convertUnit2Px(lineHeight1), skPaint);
+            }
+
+            // Goal Minutes Text Styling
+            using (SKPaint skPaint = new SKPaint())
+            {
+                skPaint.Style = SKPaintStyle.Fill;
+                skPaint.IsAntialias = true;
+                skPaint.Color = TextColor.ToSKColor();
+                skPaint.TextAlign = SKTextAlign.Center;
+                skPaint.TextSize = convertUnit2Px(textSize3);
+                canvas.DrawText(BottomText, Xc, Yc + convertUnit2Px(lineHeight2), skPaint);
+            }
+            // min et max
+            using (SKPaint skPaint = new SKPaint())
+            {
+                skPaint.Style = SKPaintStyle.Fill;
+                skPaint.IsAntialias = true;
+                skPaint.Color = TextColor.ToSKColor();
+                skPaint.TextAlign = SKTextAlign.Left;
+                skPaint.TextSize = convertUnit2Px(textSize3);
+                canvas.DrawText(MinValue.ToString(), X1 + convertUnit2Px(radialGaugeWidth), Y2, skPaint);
+            }
+            using (SKPaint skPaint = new SKPaint())
+            {
+                skPaint.Style = SKPaintStyle.Fill;
+                skPaint.IsAntialias = true;
+                skPaint.Color = TextColor.ToSKColor();
+                skPaint.TextAlign = SKTextAlign.Right;
+                skPaint.TextSize = convertUnit2Px(textSize3);
+                canvas.DrawText(MaxValue.ToString(), X2 - convertUnit2Px(radialGaugeWidth), Y2, skPaint);
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.WriteLine(e.StackTrace);
         }
     }
+}
 }

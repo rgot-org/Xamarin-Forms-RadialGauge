@@ -14,6 +14,57 @@ Just add the NuGet package and you're good to go!
 ```bash
 dotnet add package org.rgot.RadialGauge
 ```
+## Example
+- Create  a Xamarin Forms solution. 
+- Update Nuget Packages for entire solution. (Xamarin Forms > 5.0). 
+- For Android project target framework 11. 
+### MainPage.xaml
+```csharp
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:radial="clr-namespace:RadialGauge;assembly=RadialGauge"
+             x:Class="test_radialGauge.MainPage">
+    <StackLayout>
+        <Frame BackgroundColor="#2196F3" Padding="24" CornerRadius="0">
+            <Label Text="Test Gauge" HorizontalTextAlignment="Center" TextColor="White" FontSize="36"/>
+        </Frame>
+        <radial:Gauge x:Name="jauge" 
+                      HorizontalOptions="CenterAndExpand"
+                      WidthRequest="150"
+                      HeightRequest="150"
+                      MinValue="-20"
+                      MaxValue="50"
+                      CurrentValue="25"
+                      UnitOfMeasurement="°C" 
+                      BottomText="Sensor"
+                      HasAnimation="False"
+                      FromColor="#0000ff"
+                      ToColor="Red"
+                      ViaColor="Gold"
+                      />
+        <Slider Minimum="-20" Maximum="50" x:Name="slider" ValueChanged="slider_ValueChanged"/>
+    </StackLayout>
+</ContentPage>
+```
+### MainPage.xaml.cs
+```csharp
+using Xamarin.Forms;
+namespace test_radialGauge
+{
+    public partial class MainPage : ContentPage
+    {
+        public MainPage()
+        {
+            InitializeComponent();
+        }
+        private void slider_ValueChanged(object sender, ValueChangedEventArgs e)
+        {
+            jauge.CurrentValue = (int)slider.Value;
+        }
+    }
+}
+```
 
 ## Usage
 
