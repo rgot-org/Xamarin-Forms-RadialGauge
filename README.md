@@ -19,7 +19,7 @@ dotnet add package org.rgot.RadialGauge
 - Update Nuget Packages for entire solution. (Xamarin Forms > 5.0). 
 - For Android project target framework 11. 
 ### MainPage.xaml
-```csharp
+```xml
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
