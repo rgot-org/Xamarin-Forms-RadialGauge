@@ -14,7 +14,7 @@ namespace RadialGauge
     public partial class Gauge : ContentView
     {
         public static readonly BindableProperty CurrentValueProperty =
-      BindableProperty.Create("CurrentValue", typeof(int), typeof(Gauge), propertyChanged: OnCurrentValueChanged, validateValue: ValidateCurrVal);
+      BindableProperty.Create("CurrentValue", typeof(double), typeof(Gauge), propertyChanged: OnCurrentValueChanged, validateValue: ValidateCurrVal);
         public static readonly BindableProperty MaxValueProperty =
             BindableProperty.Create("MaxValue", typeof(int), typeof(Gauge), 100, propertyChanged: OnMaxValueChanged, validateValue: ValidateMaxVal);
         public static readonly BindableProperty MinValueProperty =
@@ -39,9 +39,9 @@ namespace RadialGauge
             BindableProperty.Create("TextFont", typeof(string), typeof(Gauge), "Helvetica");
 
         //UnitOfMeasurement
-        public int CurrentValue
+        public double CurrentValue
         {
-            get => (int)GetValue(CurrentValueProperty);
+            get => (double)GetValue(CurrentValueProperty);
             set => SetValue(CurrentValueProperty, value);
         }
 
@@ -123,13 +123,13 @@ namespace RadialGauge
         static bool ValidateMaxVal(BindableObject b, object value) => true;// ((int)value) > 0;
         private static bool ValidateMinVal(BindableObject bindable, object value) => true;
 
-        static bool ValidateCurrVal(BindableObject b, object value) => ((int)value) <= ((Gauge)b).MaxValue && ((int)value) >= ((Gauge)b).MinValue;
+        static bool ValidateCurrVal(BindableObject b, object value) => ((double)value) <= ((Gauge)b).MaxValue && ((double)value) >= ((Gauge)b).MinValue;
 
         static void OnCurrentValueChanged(BindableObject b, object oldValue, object newValue)
         {
 
             Gauge g = (Gauge)b;
-            int endState = g.getSweepAngle(g.MaxValue, g.MinValue, (int)newValue);
+            int endState = g.getSweepAngle(g.MaxValue, g.MinValue, (double)newValue);
             _ = g.AnimateProgress(endState);
         }
 
@@ -169,7 +169,7 @@ namespace RadialGauge
             }
         sweepAngleSlider.Value = progress;
         }
-    public int getSweepAngle(int max, int min, int achieved)
+    public int getSweepAngle(int max, int min, double achieved)
     {
         int SweepAngle = 260;
         float factor = (float)(achieved - min) / (max - min);
@@ -217,7 +217,7 @@ namespace RadialGauge
         float X_center = side * scale / 2;
         float Y_center = X_center;
         // Line TextSize inside Radial Gauge
-        float textSize1 = 80 * scale;
+        float textSize1 = 64 * scale;
         float textSize2 = 42 * scale;
         float textSize3 = 30 * scale;
 
