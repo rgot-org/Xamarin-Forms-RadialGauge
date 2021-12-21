@@ -5,7 +5,7 @@
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
     <PackOnBuild>true</PackOnBuild>
     <PackageId>Org.Rgot.RadialGauge</PackageId>
-    <PackageVersion>1.0.3</PackageVersion>
+    <PackageVersion>1.0.4</PackageVersion>
     <Authors>Francois Riotte</Authors>
     <PackageProjectUrl>https://github.com/rgot-org/Xamarin-Forms-RadialGauge</PackageProjectUrl>
     <Title>Radial Progress Component for Xamarin.Forms based on @KPS250example</Title>
@@ -13,13 +13,13 @@
     <PackageLicenseUrl></PackageLicenseUrl>
     <PackageTags>Xamarin.Forms,Gauge,Radial</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.3</Version>
+    <Version>1.0.4</Version>
     <AssemblyName>RadialGauge</AssemblyName>
     <RootNamespace>RadialGauge</RootNamespace>
     <PackageLicenseExpression>BSD-4-Clause</PackageLicenseExpression>
     <Description>Simple Radial Gauge for Xamarin Forms, forks from Radial ProgressBar from ItamarD.Xamarin.Forms.RadialProgress</Description>
-    <AssemblyVersion>1.0.3.0</AssemblyVersion>
-    <FileVersion>1.0.3.0</FileVersion>
+    <AssemblyVersion>1.0.4.0</AssemblyVersion>
+    <FileVersion>1.0.4.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
